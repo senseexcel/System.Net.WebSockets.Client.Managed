@@ -90,7 +90,7 @@ namespace System.Net.WebSockets.Managed
                 // Upgrade to SSL if needed
                 if (uri.Scheme == UriScheme.Wss)
                 {
-                    var sslStream = new SslStream(stream);
+                    var sslStream = new SslStream(stream, false, ServicePointManager.ServerCertificateValidationCallback);
                     await sslStream.AuthenticateAsClientAsync(
                         uri.Host,
                         options.ClientCertificates,
@@ -428,7 +428,7 @@ namespace System.Net.WebSockets.Managed
                 // is that if we read multiple bytes, we could end up reading bytes post-headers
                 // that are part of messages meant to be read by the managed websocket after
                 // the connection.  The likely solution here is to wrap the stream in a BufferedStream,
-                // though a) that comes at the expense of an extra set of virtual calls, b) 
+                // though a) that comes at the expense of an extra set of virtual calls, b)
                 // it adds a buffer when the managed websocket will already be using a buffer, and
                 // c) it's not exposed on the version of the System.IO contract we're currently using.
                 while (await stream.ReadAsync(arr, 0, 1, cancellationToken).ConfigureAwait(false) == 1)

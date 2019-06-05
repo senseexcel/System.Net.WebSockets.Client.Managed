@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Net;
 using System.Net.WebSockets;
-using System.Net.WebSockets.Managed;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,8 +14,14 @@ namespace TestApp
 
         static void Main(string[] args)
         {
+            ServicePointManager.ServerCertificateValidationCallback = delegate
+            {
+                // TODO Check if this is helping against not valid Zertifikates
+                return true;
+            };
             TestConnection(WS_TEST_SERVER).GetAwaiter().GetResult();
             TestConnection(WSS_TEST_SERVER).GetAwaiter().GetResult();
+            Console.ReadLine();
         }
 
         static async Task TestConnection(string server)
